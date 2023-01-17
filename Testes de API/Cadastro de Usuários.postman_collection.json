@@ -1,0 +1,657 @@
+{
+	"info": {
+		"_postman_id": "7bab1d42-837e-4411-ab69-9dedc9202791",
+		"name": "Cadastro de Usuários",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Cenário: 1 - Tentativa de inclusão com todos os campos em branco",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"var data = pm.response.json().errors;\r",
+							"\r",
+							"pm.test('Number of errors = ' + data.length, function () {\r",
+							"    pm.expect(data.length).to.equal(6);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"\",\r\n    \"cpf\": \"\",\r\n    \"email\": \"\",\r\n    \"password\": \"\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 2 - Tentativa de inclusão informando nome inválido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid error message\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.errors[0].fieldName).to.eql(\"name\");\r",
+							"  pm.expect(responseJson.errors[0].message).to.eql(\"must contain only letters\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"!@#$1234\",\r\n    \"cpf\": \"55406855042\",\r\n    \"email\": \"maya.brenda.peixoto@magicday.com.br\",\r\n    \"password\": \"ruAiqlRJx6\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 3 - Tentativa de inclusão informando cpf inválido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid error message\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.errors[0].fieldName).to.eql(\"cpf\");\r",
+							"  pm.expect(responseJson.errors[0].message).to.eql(\"invalid Brazilian individual taxpayer registry number (CPF)\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"55406855040\",\r\n    \"email\": \"222@magicday.com.br\",\r\n    \"password\": \"ruAiqlRJx6\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 4 - Tentativa de inclusão informando cpf com mais de 11 caracteres",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid error message\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.errors[0].fieldName).to.eql(\"cpf\");\r",
+							"  pm.expect(responseJson.errors[0].message).to.eql(\"invalid Brazilian individual taxpayer registry number (CPF)\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"5540685504200\",\r\n    \"email\": \"maya.brenda.peixoto@magicday.com.br\",\r\n    \"password\": \"ruAiqlRJx6\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 5 - Tentativa de inclusão informando email inválido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid error message\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.errors[0].fieldName).to.eql(\"email\");\r",
+							"  pm.expect(responseJson.errors[0].message).to.eql(\"must be a well-formed email address\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"55406855042\",\r\n    \"email\": \"maya.brenda.peixoto\",\r\n    \"password\": \"ruAiqlRJx6\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 6 - Tentativa de inclusão informando senha com menos de 8 caracteres",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"55406855042\",\r\n    \"email\": \"22@magicday.com.br\",\r\n    \"password\": \"ruAiq\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 7 - Tentativa de inclusão com campo nome em branco",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"var data = pm.response.json().errors;\r",
+							"\r",
+							"pm.test('Number of errors = ' + data.length, function () {\r",
+							"    pm.expect(data.length).to.equal(2);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"\",\r\n    \"cpf\": \"55406855042\",\r\n    \"email\": \"maya.brenda.peixoto@magicday.com.br\",\r\n    \"password\": \"ruAiqlRJx6\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 8 - Tentativa de inclusão com campo cpf nome em branco",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"var data = pm.response.json().errors;\r",
+							"\r",
+							"pm.test('Number of errors = ' + data.length, function () {\r",
+							"    pm.expect(data.length).to.equal(2);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"\",\r\n    \"email\": \"maya.brenda.peixoto@magicday.com.br\",\r\n    \"password\": \"ruAiqlRJx6\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 9 - Tentativa de inclusão com campo email nome em branco",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid error message\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.errors[0].fieldName).to.eql(\"email\");\r",
+							"  pm.expect(responseJson.errors[0].message).to.eql(\"must not be blank\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"55406855042\",\r\n    \"email\": \"\",\r\n    \"password\": \"ruAiqlRJx6\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 10 - Tentativa de inclusão com campo passowrd nome em branco",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid error message\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.errors[0].fieldName).to.eql(\"password\");\r",
+							"  pm.expect(responseJson.errors[0].message).to.eql(\"must not be blank\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"55406855042\",\r\n    \"email\": \"maya.brenda.peixoto@magicday.com.br\",\r\n    \"password\": \"\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 11 - Inclusão de usuário com sucesso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const reqBody = JSON.parse(pm.request.body.raw)\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.not.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid fields\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.name).to.eql(reqBody.name);\r",
+							"  pm.expect(responseJson.cpf).to.eql(reqBody.cpf);\r",
+							"  pm.expect(responseJson.email).to.eql(reqBody.email);\r",
+							"});\r",
+							"\r",
+							"//seta variáveis de ambiente para utilizar na collection de login\r",
+							"pm.environment.set(\"email\", pm.response.json().email);\r",
+							"pm.environment.set(\"password\", reqBody.password);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Gera email aleatório para incluir novos usuário sem problema com repetição\r",
+							"function makeEmail() { \r",
+							"    var strValues=\"abcdefghijklmnoporstuvxz0123456789\"; \r",
+							"    var strEmail = \"\"; \r",
+							"    var strTmp; \r",
+							"    for (var i=0;i<10;i++) { \r",
+							"        strTmp = strValues.charAt(Math.round(strValues.length*Math.random())); \r",
+							"        strEmail = strEmail + strTmp; \r",
+							"    } \r",
+							"    strTmp = \"\"; \r",
+							"    strEmail = strEmail + \"@\"; \r",
+							"    for (var j=0;j<8;j++) { \r",
+							"        strTmp = strValues.charAt(Math.round(strValues.length*Math.random())); \r",
+							"        strEmail = strEmail + strTmp; \r",
+							"    } \r",
+							"    strEmail = strEmail + \".com.br\" \r",
+							"    return strEmail; \r",
+							"}\r",
+							"\r",
+							"//Gera senha aleatória\r",
+							"function makePass() { \r",
+							"    var strValues=\"abcdefghijklmnoporstuvxz0123456789\"; \r",
+							"    var strPass = \"\"; \r",
+							"    var strTmp; \r",
+							"\r",
+							"    for (var j=0;j<8;j++) { \r",
+							"        strTmp = strValues.charAt(Math.round(strValues.length*Math.random())); \r",
+							"        strPass = strPass + strTmp; \r",
+							"    } \r",
+							"\r",
+							"    return strPass; \r",
+							"}\r",
+							"\r",
+							"//Seta as variáveis de ambiente para utilizar no body request\r",
+							"pm.environment.set(\"email\", makeEmail());\r",
+							"pm.environment.set(\"password\", makePass());\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"55406855042\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cenário: 12 - Tentativa de inclusão de usuário com campo email repetido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid erros response body\", function () {\r",
+							"    pm.response.to.have.jsonBody(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Valid error message\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.errors[0].fieldName).to.eql(\"email\");\r",
+							"  pm.expect(responseJson.errors[0].message).to.eql(\"user already registered\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "string"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maya Brenda Yasmin Peixoto\",\r\n    \"cpf\": \"55406855042\",\r\n    \"email\": \"maya.brenda.peixoto@magicday.com.br\",\r\n    \"password\": \"ruAiqlRJx6\"\r\n}"
+				},
+				"url": {
+					"raw": "{{path_url}}/users",
+					"host": [
+						"{{path_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
